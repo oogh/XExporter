@@ -26,6 +26,7 @@ enum ExportResult {
 
 class XExporter {
     using ExportResultCallback = std::function<void(ExportResult result)>;
+
 public:
     XExporter(const std::string& outputPath,
               int width = DEFAULT_PARAM_WIDTH,
@@ -35,42 +36,50 @@ public:
 
     ~XExporter();
 
-    void start();
-
-    int encodeSample(uint8_t* samples);
-
-    int encodeFrame(uint8_t* pixels, int width, int height);
-
-    void stop();
-
-    void setExportResultCallback(ExportResultCallback resultCallback = nullptr);
+    void setVideoDisable(bool disableVideo);
 
     void setAudioDisable(bool disableAudio);
 
-    void setVideoDisable(bool disableVideo);
+    void setExportResultCallback(ExportResultCallback resultCallback = nullptr);
+
+    void start();
+
+    int encodeFrame(uint8_t* pixels, int width, int height);
+
+    int encodeSample(uint8_t* samples);
+
+    void stop();
 
     void debug();
 
 private:
 
-    int encodeVideoFrame();
-
-    void encodeAudioWorkThread(void* opaque);
-
-    void encodeVideoWorkThread(void* opaque);
-
     int openOutFile();
+
+    int addVideoStream();
 
     int addAudioStream();
 
-    int addVideoStream();
+    int writeVideoFrame();
+
+    int writeAudioFrame();
 
     int closeOutFile();
 
 private:
+
     std::shared_ptr<Frame> allocVideoFrame();
 
+    std::shared_ptr<Frame> allocAudioFrame();
+
     void frameConvert(std::shared_ptr<Frame> dst, uint8_t* src, int srcWidth, int srcHeight);
+
+    void sampleCovert(std::shared_ptr<Frame> dst, uint8_t* src);
+
+private:
+    void encodeVideoWorkThread(void* opaque);
+
+    void encodeAudioWorkThread(void* opaque);
 
 private:
     static const int DEFAULT_PARAM_WIDTH = 540;

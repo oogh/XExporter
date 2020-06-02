@@ -59,8 +59,6 @@ void testExport() {
 }
 
 int main() {
-    getchar();
     testExport();
-    getchar();
     return 0;
 }
