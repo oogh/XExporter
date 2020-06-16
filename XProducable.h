@@ -21,14 +21,26 @@ public:
 
     virtual ~XProducable();
 
+    virtual void setDisableVideo(bool disabled);
+
+    virtual void setDisableAudio(bool disabled);
+
     virtual void setInput(const std::string& filename);
+
+    virtual void start();
 
     virtual std::shared_ptr<XImage> getImage(long clock);
 
     virtual std::shared_ptr<XSample> getSample();
 
+    virtual void stop();
+
 protected:
     std::string mFilename;
+
+    bool mDisableVideo;
+
+    bool mDisableAudio;
 };
 
 

@@ -12,8 +12,7 @@
 #include <vector>
 #include <mutex>
 #include <condition_variable>
-
-struct XImage;
+#include "XImage.h"
 
 class XImageQueue {
 public:

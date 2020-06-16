@@ -1,6 +1,10 @@
 #include <iostream>
+#include <vector>
+#include <string>
 #include "XExporter.h"
 #include "XFileProducer.h"
+#include "XFFProducer.h"
+#include "XTimeCounter.h"
 
 void testExport() {
     std::string outPath = "/Users/andy/export.mp4";
@@ -38,10 +42,9 @@ void testExport() {
         exit(0);
     }
 
-
     long delay = static_cast<long>(1000.0 / fps);
     int encodeCount = 0;
-    for (int clock = 0; clock < duration; clock += delay) {
+    for (long clock = 0; clock < duration; clock += delay) {
         auto image = fileProducer->getImage(clock);
         exporter->encodeFrame(image->pixels, image->width, image->height);
         encodeCount++;
@@ -58,7 +61,64 @@ void testExport() {
     exporter.reset();
 }
 
+void testProducerOpen() {
+    std::vector<std::string> filenames = {
+        "/Users/andy/Movies/1553566650589.mp4",
+        "/Users/andy/Movies/2.5D水墨Pre.mp4",
+        "/Users/andy/Movies/8k.mp4",
+        "/Users/andy/Movies/2vuy.mov",
+        "/Users/andy/Movies/720.mp4",
+        "/Users/andy/Movies/MMVideo_1006741768.mp4",
+        "/Users/andy/Movies/_duanshipin.mp4",
+        "/Users/andy/Movies/_output.mp4",
+        "/Users/andy/Movies/backgroundVideo.mp4",
+        "/Users/andy/Movies/douyin_1.mp4",
+        "/Users/andy/Movies/douyin_700x1240.mp4",
+        "/Users/andy/Movies/hepingjingying.mp4",
+        "/Users/andy/Movies/jieqian_4s_720x1280.mp4",
+        "/Users/andy/Movies/jieqian_720x1280.mp4",
+        "/Users/andy/Movies/lianche.mp4",
+        "/Users/andy/Movies/shangxianping_5e267085d8593_1579577477.mp4",
+        "/Users/andy/Movies/suoping.mp4",
+        "/Users/andy/Movies/yangzhiganlu.mp4",
+        "/Users/andy/Movies/zayin.mp4",
+        "/Users/andy/Movies/背景视频.mp4",
+        "/Users/andy/Movies/预览视频.mp4"
+    };
+    
+    std::vector<std::shared_ptr<XFFProducer>> producerList;
+
+    int size = filenames.size();
+    XTimeCounter openCounter;
+    int index = 0;
+    for (int i = 0; i < size; ++i) {
+        openCounter.markStart();
+        index = i;
+        auto producer = std::make_shared<XFFProducer>();
+        try {
+            producer->setInput(filenames.at(index));
+            producerList.emplace_back(producer);
+            producer->start();
+        } catch (std::exception& e) {
+            std::cout << "[Application] set input failed: " << e.what() << std::endl;
+        }
+        openCounter.markEnd();
+        std::cout << "[Application] [" << openCounter.getRunDuration() << " ms]: " << filenames.at(index) << std::endl;
+    }
+}
+
+void testProducerReadPacket() {
+    auto producer = std::make_shared<XFFProducer>();
+    try {
+        producer->setInput("/Users/andy/Movies/jieqian_720x1280.mp4");
+        producer->start();
+    } catch (std::exception& e) {
+        std::cout << "[Application] set input failed: " << e.what() << std::endl;
+    }
+    getchar();
+}
+
 int main() {
-    testExport();
+    testProducerReadPacket();
     return 0;
 }

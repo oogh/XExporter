@@ -8,7 +8,8 @@
 
 #include "XProducable.h"
 
-XProducable::XProducable() {
+XProducable::XProducable()
+        : mDisableVideo(false), mDisableAudio(false) {
 
 }
 
@@ -16,8 +17,20 @@ XProducable::~XProducable() {
 
 }
 
+void XProducable::setDisableVideo(bool disabled) {
+    mDisableVideo = disabled;
+}
+
+void XProducable::setDisableAudio(bool disabled) {
+    mDisableAudio = disabled;
+}
+
 void XProducable::setInput(const std::string &filename) {
     mFilename = filename;
+}
+
+void XProducable::start() {
+
 }
 
 std::shared_ptr<XImage> XProducable::getImage(long clock) {
@@ -26,4 +39,8 @@ std::shared_ptr<XImage> XProducable::getImage(long clock) {
 
 std::shared_ptr<XSample> XProducable::getSample() {
     return nullptr;
+}
+
+void XProducable::stop() {
+
 }

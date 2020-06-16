@@ -7,7 +7,6 @@
 //
 
 #include "XImageQueue.h"
-#include "XImage.h"
 
 XImageQueue::XImageQueue(int capacity)
 : mCapacity(capacity), mSize(0), mWindex(0), mRindex(0), mAborted(false) {

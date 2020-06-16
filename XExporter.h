@@ -72,7 +72,7 @@ private:
 
     std::shared_ptr<Frame> allocAudioFrame();
 
-    void frameConvert(std::shared_ptr<Frame> dst, uint8_t* src, int srcWidth, int srcHeight);
+    int frameConvert(std::shared_ptr<Frame> dst, uint8_t* src, int srcWidth, int srcHeight);
 
     void sampleCovert(std::shared_ptr<Frame> dst, uint8_t* src);
 

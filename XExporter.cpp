@@ -55,11 +55,11 @@ void XExporter::start() {
     }
 
     if (!mDisableAudio) {
-        mEncodeAudioTid = std::make_unique<std::thread>(std::bind(&XExporter::encodeAudioWorkThread, this, this));
+        mEncodeAudioTid = std::make_unique<std::thread>([this] { encodeAudioWorkThread(this); });
     }
 
     if (!mDisableVideo) {
-        mEncodeVideoTid = std::make_unique<std::thread>(std::bind(&XExporter::encodeVideoWorkThread, this, this));
+        mEncodeVideoTid = std::make_unique<std::thread>([this] { encodeVideoWorkThread(this); });
     }
 }
 
@@ -382,14 +382,14 @@ std::shared_ptr<Frame> XExporter::allocAudioFrame() {
     return std::shared_ptr<Frame>();
 }
 
-void XExporter::frameConvert(std::shared_ptr<Frame> dst, uint8_t *src, int srcWidth, int srcHeight) {
+int XExporter::frameConvert(std::shared_ptr<Frame> dst, uint8_t *src, int srcWidth, int srcHeight) {
     if (!mSwsContext) {
         SwsContext *sws = sws_getCachedContext(nullptr, srcWidth, srcHeight, AV_PIX_FMT_RGBA,
                                                mWidth, mHeight, EXPORT_PARAM_PIX_FMT,
                                                0, nullptr, nullptr, nullptr);
         if (!sws) {
             av_log(nullptr, AV_LOG_ERROR, "[XExporter] sws_getCachedContext failed!\n");
-            return;
+            return -1;
         }
         mSwsContext = std::unique_ptr<SwsContext, SwsContextDeleter>(sws);
     }
@@ -397,7 +397,7 @@ void XExporter::frameConvert(std::shared_ptr<Frame> dst, uint8_t *src, int srcWi
     uint8_t *data[4] = {src, nullptr};
     int linesize[4] = {0};
     av_image_fill_linesizes(linesize, AV_PIX_FMT_RGBA, srcWidth);
-    sws_scale(mSwsContext.get(), data, linesize, 0, srcHeight, dst->avframe->data, dst->avframe->linesize);
+    return sws_scale(mSwsContext.get(), data, linesize, 0, srcHeight, dst->avframe->data, dst->avframe->linesize);
 }
 
 void XExporter::sampleCovert(std::shared_ptr<Frame> dst, uint8_t *src) {

@@ -12,8 +12,8 @@ include_directories(${SRC_DIR})
 aux_source_directory(${SRC_DIR} SOURCE_DIR)
 
 # 第三方库
-include_directories(/usr/local/Cellar/ffmpeg/4.2.2-with-options_1/include)
-link_directories(/usr/local/Cellar/ffmpeg/4.2.2-with-options_1/lib)
+include_directories(/usr/local/Cellar/ffmpeg/HEAD-7f81785_2/include)
+link_directories(/usr/local/Cellar/ffmpeg/HEAD-7f81785_2/lib)
 
 set(SOURCE ${SOURCE_DIR})
 
